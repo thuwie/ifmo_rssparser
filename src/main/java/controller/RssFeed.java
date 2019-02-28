@@ -1,8 +1,10 @@
+package controller;
 
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
+import lombok.Data;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -12,15 +14,19 @@ import org.apache.http.impl.client.HttpClients;
 import java.io.InputStream;
 import java.util.List;
 
-public class RssParser implements Runnable {
+@Data
+public class RssFeed implements Runnable {
     private String URL;
-    private int updateTime;
+    private String name;
+    private long updateTime;
+    private Boolean status;
 
-    public RssParser(String URL, int updateTime) {
+    public RssFeed(String name, String URL, int updateTime) {
+        this.name = name;
         this.URL = URL;
-        this.updateTime = updateTime;
+        this.updateTime = (long) updateTime;
+        this.status = false;
     }
-
 
     public void dumb() {
         String urlNew = "https://www.jpl.nasa.gov/multimedia/rss/news.xml";
@@ -42,7 +48,7 @@ public class RssParser implements Runnable {
 
     @Override
     public void run() {
-
+        System.out.println("imma trying");
     }
 }
 
