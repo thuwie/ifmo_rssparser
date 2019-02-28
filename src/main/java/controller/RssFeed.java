@@ -10,12 +10,15 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import thingies.RssParser;
+import thingies.impl.RssParserImpl;
 
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.List;
 
 @Data
-public class RssFeed implements Runnable {
+public class RssFeed implements Runnable, Serializable {
     private String URL;
     private String name;
     private long updateTime;
@@ -48,7 +51,9 @@ public class RssFeed implements Runnable {
 
     @Override
     public void run() {
-        System.out.println("imma trying");
+        RssParser parser = new RssParserImpl();
+        parser.fetchRssFeed("https://www.jpl.nasa.gov/multimedia/rss/news.xml");
     }
+
 }
 

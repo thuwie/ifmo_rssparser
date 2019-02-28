@@ -39,8 +39,11 @@ public class UserMenu {
                 break;
             }
             case ("list"): {
-                this.feedsController.getFeedsList().forEach((key, value) ->
-                        System.out.println(String.format("Name: %s. Status: %b", key, value.getStatus())));
+                displayFeedList();
+                break;
+            }
+            case ("edit"): {
+                editFeed();
                 break;
             }
             case ("stop"): {
@@ -56,12 +59,6 @@ public class UserMenu {
         }
     }
 
-    private void stopFeed() {
-        System.out.println("Name to stop: ");
-        String name = scanner.nextLine();
-        this.feedsController.stopFeed(name);
-    }
-
     private void addFeed() {
         System.out.println("Name: ");
         String name = scanner.nextLine();
@@ -74,8 +71,29 @@ public class UserMenu {
 
     }
 
+    private void displayFeedList() {
+        this.feedsController.getFeedsList().forEach((key, value) ->
+                System.out.println(String.format("Name: %s. Status: %b", key, value.getStatus())));
+    }
+
+    private void editFeed() {
+        System.out.println("Name to change: ");
+        String name = scanner.nextLine();
+        System.out.println("Property to change: ");
+        String property = scanner.nextLine();
+        System.out.println("New value: ");
+        String value = scanner.nextLine();
+        this.feedsController.editProperties(name, property, value);
+    }
+
+    private void stopFeed() {
+        System.out.println("Name to stop: ");
+        String name = scanner.nextLine();
+        this.feedsController.stopFeed(name);
+    }
+
     private void printMenu() {
         System.out.println("___________________________________________________");
-        System.out.println("Print chosen option:\nadd\nlist\nstop\nexit");
+        System.out.println("Print chosen option:\nadd\nlist\nedit\nstop\nexit");
     }
 }

@@ -39,6 +39,10 @@ public class FeedsController {
         log.info(String.format("Feed %s successfully stopped.", name));
     }
 
+    public RssFeed getFeedEntity(String name) {
+        return feedsList.get(name);
+    }
+
     private void scheduleFeeds() {
         this.feedsList.forEach((key, value) -> {
             //TODO create task for each RssFeed
@@ -46,4 +50,10 @@ public class FeedsController {
     }
 
 
+    public void editProperties(String name, String property, String value) {
+        if ("name".equalsIgnoreCase(property)) {
+            this.feedsList.put(value, this.feedsList.remove(name));
+            this.tasksList.put(value, this.tasksList.remove(name));
+        }
+    }
 }
