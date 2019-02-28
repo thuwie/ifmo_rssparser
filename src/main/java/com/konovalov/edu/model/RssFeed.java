@@ -1,4 +1,4 @@
-package controller;
+package com.konovalov.edu.controller;
 
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
@@ -10,8 +10,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import thingies.RssParser;
-import thingies.impl.RssParserImpl;
+import com.konovalov.edu.thingies.RssParser;
+import com.konovalov.edu.thingies.impl.RssParserImpl;
 
 import java.io.InputStream;
 import java.io.Serializable;
@@ -32,7 +32,7 @@ public class RssFeed implements Runnable, Serializable {
     }
 
     public void dumb() {
-        String urlNew = "https://www.jpl.nasa.gov/multimedia/rss/news.xml";
+        String urlNew = "https://xkcd.com/rss.xml";
         try (CloseableHttpClient client = HttpClients.createMinimal()) {
             HttpUriRequest request = new HttpGet(urlNew);
             try (CloseableHttpResponse response = client.execute(request);
@@ -52,7 +52,7 @@ public class RssFeed implements Runnable, Serializable {
     @Override
     public void run() {
         RssParser parser = new RssParserImpl();
-        parser.fetchRssFeed("https://www.jpl.nasa.gov/multimedia/rss/news.xml");
+        parser.fetchRssFeed("https://xkcd.com/rss.xml");
     }
 
 }
