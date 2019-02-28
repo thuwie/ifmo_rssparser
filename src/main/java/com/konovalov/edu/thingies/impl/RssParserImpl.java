@@ -1,5 +1,6 @@
-package thingies.impl;
+package com.konovalov.edu.thingies.impl;
 
+import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.FeedException;
 import com.rometools.rome.io.SyndFeedInput;
@@ -9,10 +10,14 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import thingies.RssParser;
+import com.konovalov.edu.thingies.RssParser;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static java.util.Objects.isNull;
 
 public class RssParserImpl implements RssParser {
     public RssParserImpl() {
@@ -31,7 +36,8 @@ public class RssParserImpl implements RssParser {
                  InputStream stream = response.getEntity().getContent()) {
                 SyndFeedInput input = new SyndFeedInput();
                 SyndFeed feed = input.build(new XmlReader(stream));
-                feed.getEntries().forEach(e -> System.out.println("WOW " + e));
+                List<SyndEntry> entries = feed.getEntries().stream().filter(e -> (!isNull(e.getPublishedDate()))).collect(Collectors.toList());
+                entries.forEach(e -> System.out.println(e.getPublishedDate()));
             } catch (FeedException e) {
                 e.printStackTrace();
             }

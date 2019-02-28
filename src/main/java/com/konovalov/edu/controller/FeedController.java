@@ -1,5 +1,6 @@
 package com.konovalov.edu.controller;
 
+import com.konovalov.edu.model.RssFeed;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -8,14 +9,16 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import static java.util.Objects.isNull;
+
 @Data
 @Slf4j
-public class FeedsController {
+public class FeedController {
     ConcurrentHashMap<String, RssFeed> feedsList;
     ConcurrentHashMap<String, ScheduledFuture<?>> tasksList;
     ScheduledThreadPoolExecutor executor;
 
-    public FeedsController(ConcurrentHashMap<String, RssFeed> feedsList, ScheduledThreadPoolExecutor scheduledExecutorService) {
+    public FeedController(ConcurrentHashMap<String, RssFeed> feedsList, ScheduledThreadPoolExecutor scheduledExecutorService) {
         this.feedsList = feedsList;
         this.tasksList = new ConcurrentHashMap<>();
         this.executor = scheduledExecutorService;
@@ -29,18 +32,14 @@ public class FeedsController {
         feedsList.put(feed.getName(), feed);
         tasksList.put(feed.getName(), feedFuture);
         feed.setStatus(true);
-        log.info(String.format("Feed %s successfully added", feed.getName()));
+        log.info("Feed {} successfully added.", feed.getName());
     }
 
     public void stopFeed(String name) {
         tasksList.get(name).cancel(false);
         tasksList.remove(name);
         feedsList.get(name).setStatus(false);
-        log.info(String.format("Feed %s successfully stopped.", name));
-    }
-
-    public RssFeed getFeedEntity(String name) {
-        return feedsList.get(name);
+        log.info("Feed {} successfully stopped.", name);
     }
 
     private void scheduleFeeds() {
@@ -55,5 +54,9 @@ public class FeedsController {
             this.feedsList.put(value, this.feedsList.remove(name));
             this.tasksList.put(value, this.tasksList.remove(name));
         }
+    }
+
+    public boolean isFeedExists(String name) {
+        return !isNull(this.feedsList.get(name));
     }
 }

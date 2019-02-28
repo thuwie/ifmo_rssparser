@@ -1,7 +1,9 @@
-package system;
+package com.konovalov.edu.system;
 
-import controller.FeedsController;
-import controller.RssFeed;
+import com.konovalov.edu.controller.FeedController;
+import com.konovalov.edu.exceptions.FeedAlreadyExistsException;
+import com.konovalov.edu.model.RssFeed;
+import com.konovalov.edu.exceptions.NoSuchFeedException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Scanner;
@@ -12,7 +14,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 public class UserMenu {
     private boolean running;
     private Scanner scanner;
-    private FeedsController feedsController;
+    private FeedController feedController;
     private ScheduledThreadPoolExecutor executor;
 
 
@@ -20,7 +22,7 @@ public class UserMenu {
         this.running = true;
         this.executor = scheduledExecutorService;
         this.scanner = new Scanner(System.in);
-        this.feedsController = new FeedsController(new ConcurrentHashMap<>(), scheduledExecutorService);
+        this.feedController = new FeedController(new ConcurrentHashMap<>(), scheduledExecutorService);
     }
 
     public void launchUserMenu() {
@@ -31,11 +33,14 @@ public class UserMenu {
     }
 
     private void invokeMenu() {
-
         String option = scanner.nextLine();
         switch (option) {
             case ("add"): {
-                addFeed();
+                try {
+                    addFeed();
+                } catch (FeedAlreadyExistsException ex) {
+                    log.error(ex.getMessage());
+                }
                 break;
             }
             case ("list"): {
@@ -43,11 +48,19 @@ public class UserMenu {
                 break;
             }
             case ("edit"): {
-                editFeed();
+                try {
+                    editFeed();
+                } catch (NoSuchFeedException ex) {
+                    log.error(ex.getMessage());
+                }
                 break;
             }
             case ("stop"): {
-                stopFeed();
+                try {
+                    stopFeed();
+                } catch (NoSuchFeedException ex) {
+                    log.error(ex.getMessage());
+                }
                 break;
             }
             case ("exit"): {
@@ -65,14 +78,17 @@ public class UserMenu {
         System.out.println("url: ");
         String URL = scanner.nextLine().trim();
         System.out.println("update time: ");
-        int updateTime = (scanner.nextInt());
-        RssFeed newFeed = new RssFeed(name, URL, updateTime);
-        this.feedsController.addFeed(newFeed);
-
+        int updateTime = (scanner.nextInt()); // TODO catch mismatch exc
+        if (!this.feedController.isFeedExists(name)) {
+            RssFeed newFeed = new RssFeed(name, URL, updateTime);
+            this.feedController.addFeed(newFeed);
+        } else {
+            throw new FeedAlreadyExistsException(String.format("Feed %s does not exist", name));
+        }
     }
 
     private void displayFeedList() {
-        this.feedsController.getFeedsList().forEach((key, value) ->
+        this.feedController.getFeedsList().forEach((key, value) ->
                 System.out.println(String.format("Name: %s. Status: %b", key, value.getStatus())));
     }
 
@@ -83,17 +99,30 @@ public class UserMenu {
         String property = scanner.nextLine();
         System.out.println("New value: ");
         String value = scanner.nextLine();
-        this.feedsController.editProperties(name, property, value);
+        if (this.feedController.isFeedExists(name)) {
+            this.feedController.editProperties(name, property, value);
+        } else {
+            throw new NoSuchFeedException(String.format("Feed %s does not exist", name));
+        }
     }
 
     private void stopFeed() {
         System.out.println("Name to stop: ");
         String name = scanner.nextLine();
-        this.feedsController.stopFeed(name);
+
+        if (this.feedController.isFeedExists(name)) {
+            this.feedController.stopFeed(name);
+        } else {
+            throw new NoSuchFeedException(String.format("Feed %s does not exist", name));
+        }
     }
 
     private void printMenu() {
-        System.out.println("___________________________________________________");
-        System.out.println("Print chosen option:\nadd\nlist\nedit\nstop\nexit");
+        log.info("Chose option: ");
+        log.info("1. Add feed worker      || add");
+        log.info("2. Display workers list || list");
+        log.info("3. Edit feed worker     || edit");
+        log.info("4. Stop feed worker     || stop");
+        log.info("5. Exit                 || exit");
     }
 }

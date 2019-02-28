@@ -1,4 +1,4 @@
-package exceptions;
+package com.konovalov.edu.exceptions;
 
 public class RssParserException extends RuntimeException {
     public RssParserException(String message) {

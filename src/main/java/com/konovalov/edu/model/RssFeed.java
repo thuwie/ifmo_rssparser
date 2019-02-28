@@ -1,4 +1,4 @@
-package com.konovalov.edu.controller;
+package com.konovalov.edu.model;
 
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;

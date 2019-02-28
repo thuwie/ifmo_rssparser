@@ -1,4 +1,4 @@
-package thingies;
+package com.konovalov.edu.thingies;
 
 public interface RssParser {
 
