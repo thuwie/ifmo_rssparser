@@ -1,0 +1,11 @@
+{
+  "feeds": [
+    {
+      "name": "lenta",
+      "url": "https://lenta.ru/rss",
+      "updateTime": 50,
+      "lastUpdateDate": "2019-03-01T10:00:00.00",
+      "template": "%name%, %description%"
+    }
+  ]
+}

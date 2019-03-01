@@ -42,9 +42,15 @@ public class FeedController {
         log.info("Feed {} successfully stopped.", name);
     }
 
+    public String viewFeed(String name) {
+        return feedsList.get(name).toString();
+    }
+
     private void scheduleFeeds() {
-        this.feedsList.forEach((key, value) -> {
-            //TODO create task for each RssFeed
+        this.feedsList.forEach((name, feed) -> {
+            ScheduledFuture<?> feedFuture = executor.scheduleAtFixedRate(feed, feed.getUpdateTime(), feed.getUpdateTime(), TimeUnit.SECONDS);
+            feed.setStatus(true);
+            tasksList.put(name, feedFuture);
         });
     }
 
@@ -54,6 +60,10 @@ public class FeedController {
             this.feedsList.put(value, this.feedsList.remove(name));
             this.tasksList.put(value, this.tasksList.remove(name));
         }
+    }
+
+    public void shutdownExecutor() {
+        this.executor.shutdown();
     }
 
     public boolean isFeedExists(String name) {

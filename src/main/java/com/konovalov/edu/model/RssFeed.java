@@ -15,21 +15,35 @@ import com.konovalov.edu.thingies.impl.RssParserImpl;
 
 import java.io.InputStream;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 @Data
-public class RssFeed implements Runnable, Serializable {
-    private String URL;
+public class RssFeed implements Runnable {
     private String name;
-    private long updateTime;
+    private String URL;
+    private Long updateTime;
+    private Date lastUpdateDate;
+    private String template;
     private Boolean status;
+    private String filename;
+    private RssParser parser;
 
-    public RssFeed(String name, String URL, int updateTime) {
-        this.name = name;
-        this.URL = URL;
-        this.updateTime = (long) updateTime;
+    public RssFeed() {
         this.status = false;
     }
+
+    public RssFeed(String name, String URL, Long updateTime, Date lastUpdateDate, String template, String filename) {
+        this.name = name;
+        this.URL = URL;
+        this.updateTime = updateTime;
+        this.status = false;
+        this.lastUpdateDate = lastUpdateDate;
+        this.template = template;
+        this.filename = filename;
+        this.parser = new RssParserImpl();
+    }
+
 
     public void dumb() {
         String urlNew = "https://xkcd.com/rss.xml";
@@ -51,8 +65,18 @@ public class RssFeed implements Runnable, Serializable {
 
     @Override
     public void run() {
-        RssParser parser = new RssParserImpl();
-        parser.fetchRssFeed("https://xkcd.com/rss.xml");
+
+//        parser.fetchRssFeed();
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Name: [%s]\n " +
+                "Url: [%s]\n" +
+                "Update time: [%d]\n" +
+                "Status: [%b]\n" +
+                "Template: [%s]\n" +
+                "Filename: [%s]", this.name, this.URL, this.updateTime, this.status, this.template, this.filename);
     }
 
 }

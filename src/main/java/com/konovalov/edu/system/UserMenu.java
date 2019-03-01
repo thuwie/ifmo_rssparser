@@ -15,14 +15,12 @@ public class UserMenu {
     private boolean running;
     private Scanner scanner;
     private FeedController feedController;
-    private ScheduledThreadPoolExecutor executor;
 
 
-    public UserMenu(ScheduledThreadPoolExecutor scheduledExecutorService) {
+    public UserMenu(FeedController feedController) {
         this.running = true;
-        this.executor = scheduledExecutorService;
         this.scanner = new Scanner(System.in);
-        this.feedController = new FeedController(new ConcurrentHashMap<>(), scheduledExecutorService);
+        this.feedController = feedController;
     }
 
     public void launchUserMenu() {
@@ -47,6 +45,10 @@ public class UserMenu {
                 displayFeedList();
                 break;
             }
+            case ("view"): {
+                viewFeed();
+                break;
+            }
             case ("edit"): {
                 try {
                     editFeed();
@@ -66,7 +68,7 @@ public class UserMenu {
             case ("exit"): {
                 running = false;
                 scanner.close();
-                this.executor.shutdown();
+                this.feedController.shutdownExecutor();
                 return;
             }
         }
@@ -78,9 +80,9 @@ public class UserMenu {
         System.out.println("url: ");
         String URL = scanner.nextLine().trim();
         System.out.println("update time: ");
-        int updateTime = (scanner.nextInt()); // TODO catch mismatch exc
+        long updateTime = scanner.nextLong(); // TODO catch mismatch exc
         if (!this.feedController.isFeedExists(name)) {
-            RssFeed newFeed = new RssFeed(name, URL, updateTime);
+            RssFeed newFeed = new RssFeed(name, URL, updateTime, null, null, null);
             this.feedController.addFeed(newFeed);
         } else {
             throw new FeedAlreadyExistsException(String.format("Feed %s does not exist", name));
@@ -104,6 +106,17 @@ public class UserMenu {
         } else {
             throw new NoSuchFeedException(String.format("Feed %s does not exist", name));
         }
+    }
+
+    private void viewFeed() {
+        System.out.println("Name to view: ");
+        String name = scanner.nextLine();
+        if (this.feedController.isFeedExists(name)) {
+            System.out.println(this.feedController.viewFeed(name));
+        } else {
+            throw new NoSuchFeedException(String.format("Feed %s does not exist", name));
+        }
+
     }
 
     private void stopFeed() {
