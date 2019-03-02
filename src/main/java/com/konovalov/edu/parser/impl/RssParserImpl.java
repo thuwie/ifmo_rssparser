@@ -121,4 +121,5 @@ public class RssParserImpl implements RssParser {
             System.out.println(e);
         }
     }
+
 }

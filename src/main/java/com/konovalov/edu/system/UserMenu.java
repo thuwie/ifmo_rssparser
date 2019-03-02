@@ -7,7 +7,6 @@ import com.konovalov.edu.util.Defaults;
 import com.konovalov.edu.util.FeedUtils;
 import lombok.extern.slf4j.Slf4j;
 
-import java.sql.SQLOutput;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -95,6 +94,9 @@ public class UserMenu {
         String name = scanner.nextLine();
         System.out.println("url: ");
         String URL = scanner.nextLine().trim();
+        if(!FeedUtils.checkUrl(URL)) {
+            return;
+        }
         int updateTime;
         int postsLimit;
         try {
@@ -106,9 +108,10 @@ public class UserMenu {
             log.error("Invalid integer");
             return;
         }
+        scanner.nextLine();
         System.out.println("Template: opt");
+        Defaults.syndTemplate().forEach((key,value) -> System.out.print(key+ " | "));
         String template = scanner.nextLine();
-
         System.out.println("Filename: opt");
         String filename = scanner.nextLine();
 

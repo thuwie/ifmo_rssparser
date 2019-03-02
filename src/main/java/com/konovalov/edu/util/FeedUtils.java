@@ -1,9 +1,16 @@
 package com.konovalov.edu.util;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.util.EntityUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -35,6 +42,20 @@ public class FeedUtils {
         return url
                 .replaceFirst("^(http[s]?://www\\.|http[s]?://|www\\.)", "")
                 .replaceAll("[ ./:]", "_");
+    }
+
+    public static boolean checkUrl(String targetUrl) {
+        HttpURLConnection connection;
+        try {
+            connection = (HttpURLConnection) new URL(targetUrl).openConnection();
+            connection.setRequestMethod("HEAD");
+            connection.setConnectTimeout(10000);
+            connection.setReadTimeout(10000);
+            return (connection.getResponseCode() == HttpURLConnection.HTTP_OK);
+        } catch (Exception e) {
+            log.error("Url is broken: " + e.getMessage());
+            return false;
+        }
     }
 
     /**
