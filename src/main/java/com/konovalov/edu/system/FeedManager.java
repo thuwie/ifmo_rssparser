@@ -1,5 +1,6 @@
 package com.konovalov.edu.system;
 
+import com.konovalov.edu.controller.ConfigController;
 import com.konovalov.edu.controller.RssFeedController;
 import com.konovalov.edu.model.RssFeedConfiguration;
 import com.konovalov.edu.util.FeedUtils;

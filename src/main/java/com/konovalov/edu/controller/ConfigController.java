@@ -1,12 +1,17 @@
 package com.konovalov.edu.controller;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.konovalov.edu.model.RssFeedConfiguration;
 import lombok.extern.slf4j.Slf4j;
 import lombok.Data;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static java.util.Objects.isNull;
 

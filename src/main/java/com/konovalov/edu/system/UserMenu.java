@@ -1,11 +1,13 @@
 package com.konovalov.edu.system;
 
+import com.konovalov.edu.controller.ConfigController;
 import com.konovalov.edu.exceptions.FeedAlreadyExistsException;
 import com.konovalov.edu.model.RssFeedConfiguration;
 import com.konovalov.edu.exceptions.NoSuchFeedException;
 import com.konovalov.edu.util.Defaults;
 import com.konovalov.edu.util.FeedUtils;
 import lombok.extern.slf4j.Slf4j;
+import sun.security.krb5.Config;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -18,7 +20,6 @@ public class UserMenu {
     private boolean running;
     private Scanner scanner;
     private FeedManager feedManager;
-
 
     /**
      * Instantiates a new User menu.
