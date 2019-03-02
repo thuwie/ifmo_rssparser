@@ -9,7 +9,16 @@ import com.konovalov.edu.system.UserMenu;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
+/**
+ * The type Main.
+ */
 public class Main {
+
+    /**
+     * The entry point of application.
+     *
+     * @param args the input arguments
+     */
     public static void main(String[] args) {
         //https://lenta.ru/rss
         //http://blog.case.edu/news/feed.atom

@@ -7,6 +7,9 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.Scanner;
 
+/**
+ * The type User menu.
+ */
 @Slf4j
 public class UserMenu {
     private boolean running;
@@ -14,12 +17,20 @@ public class UserMenu {
     private FeedManager feedManager;
 
 
+    /**
+     * Instantiates a new User menu.
+     *
+     * @param feedManager the feed manager
+     */
     public UserMenu(FeedManager feedManager) {
         this.running = true;
         this.scanner = new Scanner(System.in);
         this.feedManager = feedManager;
     }
 
+    /**
+     * Launch user menu.
+     */
     public void launchUserMenu() {
         while (running) {
             printMenu();

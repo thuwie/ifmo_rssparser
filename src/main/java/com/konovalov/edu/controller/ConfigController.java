@@ -8,14 +8,28 @@ import lombok.Data;
 
 import java.io.*;
 
+/**
+ * The type Config controller.
+ */
 @Data
 @Slf4j
 public class ConfigController {
+    /**
+     * The constant configPath.
+     */
     public static final String configPath = "/config.json";
 
+    /**
+     * Instantiates a new Config controller.
+     */
     public ConfigController() {
     }
 
+    /**
+     * Load feeds json settings array.
+     *
+     * @return the json settings array
+     */
     public static JsonArray loadFeeds() {
         JsonArray feedConfig = new JsonArray();
         try {

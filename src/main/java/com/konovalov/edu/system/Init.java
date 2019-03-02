@@ -8,22 +8,28 @@ import com.konovalov.edu.model.RssFeedConfiguration;
 import com.konovalov.edu.util.Defaults;
 import com.konovalov.edu.util.FeedUtils;
 
-
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import static java.util.Objects.isNull;
 
+/**
+ * The type Init.
+ */
 public class Init {
+    /**
+     * Instantiates a new Init.
+     */
     public Init() {
     }
 
+    /**
+     * Initialize feed list concurrent hash map.
+     *
+     * @return the concurrent hash map
+     */
     public static ConcurrentHashMap<String, RssFeedController> initializeFeedList() {
         ConcurrentHashMap<String, RssFeedController> feedList = new ConcurrentHashMap<>();
 
@@ -72,10 +78,10 @@ public class Init {
                 newFeedConfiguration.setTemplate(Defaults.template);
             }
 
-            if (feedConfig.has("filename")) {
-                newFeedConfiguration.setFilename(feedConfig.get("filename").getAsString());
+            if (feedConfig.has("file")) {
+                newFeedConfiguration.setFile(FeedUtils.getFile(feedConfig.get("file").getAsString()));
             } else {
-                newFeedConfiguration.setFilename(FeedUtils.convertUrlToFilename(newFeedConfiguration.getURL()));
+                newFeedConfiguration.setFile(FeedUtils.getFile(FeedUtils.convertUrlToFilename(newFeedConfiguration.getURL())));
             }
             RssFeedController rssFeedController = new RssFeedController(newFeedConfiguration);
             feedList.put(newFeedConfiguration.getName(), rssFeedController);
@@ -85,12 +91,24 @@ public class Init {
         return feedList;
     }
 
+    /**
+     * Initialize executor scheduled thread pool executor.
+     *
+     * @return the scheduled thread pool executor
+     */
     public static ScheduledThreadPoolExecutor initializeExecutor() {
         ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(4);
         scheduledThreadPoolExecutor.setRemoveOnCancelPolicy(true);
         return scheduledThreadPoolExecutor;
     }
 
+    /**
+     * Init feed controller feed manager.
+     *
+     * @param feedList the feed list
+     * @param executor the executor
+     * @return the feed manager
+     */
     public static FeedManager initFeedController(ConcurrentHashMap<String, RssFeedController> feedList, ScheduledThreadPoolExecutor executor) {
         return new FeedManager(feedList, executor);
     }

@@ -1,4 +1,4 @@
-package com.konovalov.edu.thingies.impl;
+package com.konovalov.edu.parser.impl;
 
 import com.konovalov.edu.exceptions.RssParserException;
 import com.konovalov.edu.model.RssFeedConfiguration;
@@ -16,21 +16,33 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import com.konovalov.edu.thingies.RssParser;
+import com.konovalov.edu.parser.RssParser;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 
+/**
+ * The type Rss parser.
+ */
 @Slf4j
 public class RssParserImpl implements RssParser {
     private RssFeedConfiguration rssFeedConfiguration;
 
+    /**
+     * Instantiates a new Rss parser.
+     *
+     * @param rssFeedConfiguration the rss feed configuration
+     */
     public RssParserImpl(RssFeedConfiguration rssFeedConfiguration) {
         this.rssFeedConfiguration = rssFeedConfiguration;
     }
@@ -84,7 +96,6 @@ public class RssParserImpl implements RssParser {
             });
             parsedItems.add(valuesToReplace);
         });
-//        parsedItems.forEach(e-> System.out.println(e));
         formalizeData(parsedItems);
     }
 
@@ -103,6 +114,10 @@ public class RssParserImpl implements RssParser {
     @Override
     public synchronized void writeFile(List<String> values) {
         values.forEach(e -> System.out.println(e));
-//        Files.write(this.rssFeedConfiguration.getFilename(), )
+        try {
+            Files.write(Paths.get(System.getProperty("user.dir") +"/"+ this.rssFeedConfiguration.getFile()), values, Charset.forName("UTF-8"), StandardOpenOption.APPEND);
+        } catch (IOException e) {
+            System.out.println(e);
+        }
     }
 }

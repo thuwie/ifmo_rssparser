@@ -12,13 +12,31 @@ import java.util.concurrent.TimeUnit;
 
 import static java.util.Objects.isNull;
 
+/**
+ * The type Feed manager.
+ */
 @Data
 @Slf4j
 public class FeedManager {
+    /**
+     * The Feeds list.
+     */
     ConcurrentHashMap<String, RssFeedController> feedsList;
+    /**
+     * The Tasks list.
+     */
     ConcurrentHashMap<String, ScheduledFuture<?>> tasksList;
+    /**
+     * The Executor.
+     */
     ScheduledThreadPoolExecutor executor;
 
+    /**
+     * Instantiates a new Feed manager.
+     *
+     * @param feedsList                the feeds list
+     * @param scheduledExecutorService the scheduled executor service
+     */
     public FeedManager(ConcurrentHashMap<String, RssFeedController> feedsList, ScheduledThreadPoolExecutor scheduledExecutorService) {
         this.feedsList = feedsList;
         this.tasksList = new ConcurrentHashMap<>();
@@ -28,6 +46,11 @@ public class FeedManager {
         }
     }
 
+    /**
+     * Add feed.
+     *
+     * @param feedConfiguration the feed configuration
+     */
     public void addFeed(RssFeedConfiguration feedConfiguration) {
         RssFeedController feed = new RssFeedController(feedConfiguration);
         ScheduledFuture<?> feedFuture = executor.scheduleAtFixedRate(feed, 0L, feed.getFeedConfiguration().getUpdateTime(), TimeUnit.SECONDS);
@@ -37,6 +60,11 @@ public class FeedManager {
         log.info("Feed {} successfully added.", feed.getFeedConfiguration().getName());
     }
 
+    /**
+     * Stop feed.
+     *
+     * @param name the name
+     */
     public void stopFeed(String name) {
         tasksList.get(name).cancel(false);
         tasksList.remove(name);
@@ -44,6 +72,12 @@ public class FeedManager {
         log.info("Feed {} successfully stopped.", name);
     }
 
+    /**
+     * View feed string.
+     *
+     * @param name the name
+     * @return the string
+     */
     public String viewFeed(String name) {
         return feedsList.get(name).toString();
     }
@@ -57,6 +91,13 @@ public class FeedManager {
     }
 
 
+    /**
+     * Edit properties.
+     *
+     * @param name     the name
+     * @param property the property
+     * @param value    the value
+     */
     public void editProperties(String name, String property, String value) {
         if ("name".equalsIgnoreCase(property)) {
             this.feedsList.put(value, this.feedsList.remove(name));
@@ -64,10 +105,19 @@ public class FeedManager {
         }
     }
 
+    /**
+     * Shutdown executor.
+     */
     public void shutdownExecutor() {
         this.executor.shutdown();
     }
 
+    /**
+     * Is feed exists boolean.
+     *
+     * @param name the name
+     * @return the boolean
+     */
     public boolean isFeedExists(String name) {
         return !isNull(this.feedsList.get(name));
     }
