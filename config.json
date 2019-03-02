@@ -1,12 +1,21 @@
 {
   "feeds": [
     {
-      "name": "lenta",
+      "name": "lebta",
       "url": "https://lenta.ru/rss",
-      "updateTime": 10,
+      "updateTime": 10000,
       "postsLimit": 2,
       "lastUpdateDate": "Sat Mar 02 15:00:00 MSK 2019",
-      "template": "${title}\n${description}\n"
+      "template": "${title}\n${description}\n",
+      "filename": "lenta_ru_rss"
+    },
+    {
+      "name": "lepta",
+      "url": "https://lenta.ru/rss",
+      "updateTime": 15000,
+      "postsLimit": 2,
+      "lastUpdateDate": "Sat Mar 02 15:00:00 MSK 2019",
+      "template": "H U A H ${title}\n${description}\n"
     }
   ]
 }

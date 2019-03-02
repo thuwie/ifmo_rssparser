@@ -51,9 +51,9 @@ public class Init {
             }
 
             if (feedConfig.has("updateTime")) {
-                newFeedConfiguration.setUpdateTime(feedConfig.get("updateTime").getAsLong());
+                newFeedConfiguration.setUpdateTime(feedConfig.get("updateTime").getAsInt());
             } else {
-                newFeedConfiguration.setUpdateTime(600L);
+                newFeedConfiguration.setUpdateTime(600);
             }
 
             if (feedConfig.has("lastUpdateDate")) {
@@ -78,8 +78,8 @@ public class Init {
                 newFeedConfiguration.setTemplate(Defaults.template);
             }
 
-            if (feedConfig.has("file")) {
-                newFeedConfiguration.setFile(FeedUtils.getFile(feedConfig.get("file").getAsString()));
+            if (feedConfig.has("filename")) {
+                newFeedConfiguration.setFile(FeedUtils.getFile(feedConfig.get("filename").getAsString()));
             } else {
                 newFeedConfiguration.setFile(FeedUtils.getFile(FeedUtils.convertUrlToFilename(newFeedConfiguration.getURL())));
             }

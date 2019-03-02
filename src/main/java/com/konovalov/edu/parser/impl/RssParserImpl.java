@@ -113,9 +113,8 @@ public class RssParserImpl implements RssParser {
 
     @Override
     public synchronized void writeFile(List<String> values) {
-        values.forEach(e -> System.out.println(e));
         try {
-            Files.write(Paths.get(System.getProperty("user.dir") +"/"+ this.rssFeedConfiguration.getFile()), values, Charset.forName("UTF-8"), StandardOpenOption.APPEND);
+            Files.write(this.rssFeedConfiguration.getFile().toPath(), values, Charset.forName("UTF-8"), StandardOpenOption.APPEND);
         } catch (IOException e) {
             System.out.println(e);
         }

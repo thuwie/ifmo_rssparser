@@ -88,7 +88,7 @@ public class UserMenu {
         System.out.println("url: ");
         String URL = scanner.nextLine().trim();
         System.out.println("update time: ");
-        long updateTime = scanner.nextLong(); // TODO catch mismatch exc
+        int updateTime = scanner.nextInt(); // TODO catch mismatch exc
         if (!this.feedManager.isFeedExists(name)) {
             RssFeedConfiguration newFeed = new RssFeedConfiguration(name, URL, updateTime, null, null, null);
             this.feedManager.addFeed(newFeed);
@@ -140,11 +140,11 @@ public class UserMenu {
 
     private void printMenu() {
         log.info("Chose option: ");
-        log.info("1. Add feed worker          || add");
-        log.info("2. Display workers list     || list");
-        log.info("3. Display worker' settings || view");
-        log.info("4. Edit feed worker         || edit");
-        log.info("5. Stop feed worker         || stop");
-        log.info("6. Exit                     || exit");
+        log.info("1. Add feed worker           || add");
+        log.info("2. Display workers list      || list");
+        log.info("3. Display worker's settings || view");
+        log.info("4. Edit feed worker          || edit");
+        log.info("5. Stop feed worker          || stop");
+        log.info("6. Exit                      || exit");
     }
 }

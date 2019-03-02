@@ -84,7 +84,7 @@ public class FeedManager {
 
     private void scheduleFeeds() {
         this.feedsList.forEach((name, feed) -> {
-            ScheduledFuture<?> feedFuture = executor.scheduleAtFixedRate(feed, feed.getFeedConfiguration().getUpdateTime(), feed.getFeedConfiguration().getUpdateTime(), TimeUnit.SECONDS);
+            ScheduledFuture<?> feedFuture = executor.scheduleAtFixedRate(feed, feed.getFeedConfiguration().getUpdateTime(), feed.getFeedConfiguration().getUpdateTime(), TimeUnit.MILLISECONDS);
             feed.getFeedConfiguration().setStatus(true);
             tasksList.put(name, feedFuture);
         });

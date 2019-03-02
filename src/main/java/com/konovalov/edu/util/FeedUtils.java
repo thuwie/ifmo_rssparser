@@ -44,9 +44,9 @@ public class FeedUtils {
      * @return the file
      */
     public static File getFile(String filename) {
-        String path = System.getProperty("user.dir") + File.pathSeparator + filename;
-        File file = new File(path);
-        if (!Files.exists(Paths.get(path))) {
+        File file = new File(System.getProperty("user.dir") + "\\" + filename);
+        if (!file.isFile()) {
+            file.getParentFile().mkdirs();
             try {
                 file.createNewFile();
             } catch (IOException e) {

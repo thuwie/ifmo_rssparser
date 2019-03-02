@@ -25,7 +25,6 @@ public class RssFeedController implements Runnable {
 
     @Override
     public void run() {
-        System.out.println("phaha");
         parser.fetchRssFeed();
     }
 }

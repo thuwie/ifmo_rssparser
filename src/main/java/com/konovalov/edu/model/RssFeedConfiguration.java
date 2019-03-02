@@ -12,7 +12,7 @@ import java.util.Date;
 public class RssFeedConfiguration {
     private String name;
     private String URL;
-    private Long updateTime;
+    private Integer updateTime;
     private Date lastUpdateDate;
     private String template;
     private Integer postsLimit;
@@ -31,12 +31,12 @@ public class RssFeedConfiguration {
      *
      * @param name           the rss name
      * @param URL            the rss url
-     * @param updateTime     the gap between updates
+     * @param updateTime     the gap between updates in millis
      * @param lastUpdateDate the last update date
      * @param template       the template
      * @param file           the file
      */
-    public RssFeedConfiguration(String name, String URL, Long updateTime, Date lastUpdateDate, String template, File file) {
+    public RssFeedConfiguration(String name, String URL, int updateTime, Date lastUpdateDate, String template, File file) {
         this.name = name;
         this.URL = URL;
         this.updateTime = updateTime;
