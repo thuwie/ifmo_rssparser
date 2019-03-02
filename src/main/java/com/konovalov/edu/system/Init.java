@@ -3,8 +3,8 @@ package com.konovalov.edu.system;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.konovalov.edu.controller.ConfigController;
-import com.konovalov.edu.controller.FeedController;
-import com.konovalov.edu.model.RssFeed;
+import com.konovalov.edu.controller.RssFeedController;
+import com.konovalov.edu.model.RssFeedConfiguration;
 import com.konovalov.edu.util.Defaults;
 import com.konovalov.edu.util.FeedUtils;
 
@@ -18,51 +18,51 @@ public class Init {
     public Init() {
     }
 
-    public static ConcurrentHashMap<String, RssFeed> initializeFeedList() {
-        ConcurrentHashMap<String, RssFeed> feedList = new ConcurrentHashMap<>();
+    public static ConcurrentHashMap<String, RssFeedController> initializeFeedList() {
+        ConcurrentHashMap<String, RssFeedController> feedList = new ConcurrentHashMap<>();
 
         JsonArray feedsConfig = ConfigController.loadFeeds();
 
         feedsConfig.forEach(e -> {
             JsonObject feedConfig = e.getAsJsonObject();
-            RssFeed newFeed = new RssFeed();
+            RssFeedConfiguration newFeedConfiguration = new RssFeedConfiguration();
             if (feedConfig.has("name")) {
-                newFeed.setName(feedConfig.get("name").getAsString());
+                newFeedConfiguration.setName(feedConfig.get("name").getAsString());
             } else {
                 return;
             }
 
             if (feedConfig.has("url")) {
-                newFeed.setURL(feedConfig.get("url").getAsString());
+                newFeedConfiguration.setURL(feedConfig.get("url").getAsString());
             } else {
                 return;
             }
 
             if (feedConfig.has("updateTime")) {
-                newFeed.setUpdateTime(feedConfig.get("updateTime").getAsLong());
+                newFeedConfiguration.setUpdateTime(feedConfig.get("updateTime").getAsLong());
             } else {
-                newFeed.setUpdateTime(600L);
+                newFeedConfiguration.setUpdateTime(600L);
             }
 
             if (feedConfig.has("lastUpdateTime")) {
-                newFeed.setLastUpdateDate(new Date(feedConfig.get("lastUpdateTime").getAsString())); // date constructor is deprecated, so i had to cheer him up and make him believe in himself
+                newFeedConfiguration.setLastUpdateDate(new Date(feedConfig.get("lastUpdateTime").getAsString())); // date constructor is deprecated, so i had to cheer him up and make him believe in himself
             } else {
-                newFeed.setLastUpdateDate(Defaults.lastUpdateDate);
+                newFeedConfiguration.setLastUpdateDate(Defaults.lastUpdateDate);
             }
 
             if (feedConfig.has("template")) {
-                newFeed.setTemplate(feedConfig.get("template").getAsString());
+                newFeedConfiguration.setTemplate(feedConfig.get("template").getAsString());
             } else {
-                newFeed.setTemplate(Defaults.template);
+                newFeedConfiguration.setTemplate(Defaults.template);
             }
 
             if (feedConfig.has("filename")) {
-                newFeed.setFilename(feedConfig.get("filename").getAsString());
+                newFeedConfiguration.setFilename(feedConfig.get("filename").getAsString());
             } else {
-                newFeed.setFilename(FeedUtils.convertUrlToFilename(newFeed.getURL()));
+                newFeedConfiguration.setFilename(FeedUtils.convertUrlToFilename(newFeedConfiguration.getURL()));
             }
-
-            feedList.put(newFeed.getName(), newFeed);
+            RssFeedController rssFeedController = new RssFeedController(newFeedConfiguration);
+            feedList.put(newFeedConfiguration.getName(), rssFeedController);
 
         });
 
@@ -75,7 +75,7 @@ public class Init {
         return scheduledThreadPoolExecutor;
     }
 
-    public static FeedController initFeedController(ConcurrentHashMap<String, RssFeed> feedList, ScheduledThreadPoolExecutor executor) {
-        return new FeedController(feedList, executor);
+    public static FeedManager initFeedController(ConcurrentHashMap<String, RssFeedController> feedList, ScheduledThreadPoolExecutor executor) {
+        return new FeedManager(feedList, executor);
     }
 }

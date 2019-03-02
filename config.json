@@ -3,9 +3,9 @@
     {
       "name": "lenta",
       "url": "https://lenta.ru/rss",
-      "updateTime": 50,
+      "updateTime": 10,
       "lastUpdateDate": "2019-03-01T10:00:00.00",
-      "template": "%name%, %description%"
+      "template": "${name}, ${description},"
     }
   ]
 }

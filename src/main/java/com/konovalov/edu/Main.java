@@ -1,7 +1,8 @@
 package com.konovalov.edu;
 
-import com.konovalov.edu.controller.FeedController;
-import com.konovalov.edu.model.RssFeed;
+import com.konovalov.edu.controller.RssFeedController;
+import com.konovalov.edu.system.FeedManager;
+import com.konovalov.edu.model.RssFeedConfiguration;
 import com.konovalov.edu.system.Init;
 import org.apache.log4j.PropertyConfigurator;
 import com.konovalov.edu.system.UserMenu;
@@ -14,16 +15,16 @@ public class Main {
         PropertyConfigurator.configure(Main.class.getResourceAsStream("/log4j.properties"));
 
         ScheduledThreadPoolExecutor scheduledExecutorService = Init.initializeExecutor();
-        ConcurrentHashMap<String, RssFeed> feedList = Init.initializeFeedList();
-        FeedController feedController = Init.initFeedController(feedList, scheduledExecutorService);
+        ConcurrentHashMap<String, RssFeedController> feedList = Init.initializeFeedList();
+        FeedManager feedManager = Init.initFeedController(feedList, scheduledExecutorService);
 
-        UserMenu cli = new UserMenu(feedController);
+        UserMenu cli = new UserMenu(feedManager);
         cli.launchUserMenu();
 
 
 //        org.apache.log4j.BasicConfigurator.configure();
 //        String urlNew = "https://www.jpl.nasa.gov/multimedia/rss/news.xml";
-//        com.konovalov.edu.model.RssFeed parser = new com.konovalov.edu.model.RssFeed(urlNew, 1);
+//        com.konovalov.edu.model.RssFeedConfiguration parser = new com.konovalov.edu.model.RssFeedConfiguration(urlNew, 1);
 //
 //        parser.dumb();
 

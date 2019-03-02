@@ -1,26 +1,23 @@
 package com.konovalov.edu.system;
 
-import com.konovalov.edu.controller.FeedController;
 import com.konovalov.edu.exceptions.FeedAlreadyExistsException;
-import com.konovalov.edu.model.RssFeed;
+import com.konovalov.edu.model.RssFeedConfiguration;
 import com.konovalov.edu.exceptions.NoSuchFeedException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Scanner;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 @Slf4j
 public class UserMenu {
     private boolean running;
     private Scanner scanner;
-    private FeedController feedController;
+    private FeedManager feedManager;
 
 
-    public UserMenu(FeedController feedController) {
+    public UserMenu(FeedManager feedManager) {
         this.running = true;
         this.scanner = new Scanner(System.in);
-        this.feedController = feedController;
+        this.feedManager = feedManager;
     }
 
     public void launchUserMenu() {
@@ -68,7 +65,7 @@ public class UserMenu {
             case ("exit"): {
                 running = false;
                 scanner.close();
-                this.feedController.shutdownExecutor();
+                this.feedManager.shutdownExecutor();
                 return;
             }
         }
@@ -81,17 +78,17 @@ public class UserMenu {
         String URL = scanner.nextLine().trim();
         System.out.println("update time: ");
         long updateTime = scanner.nextLong(); // TODO catch mismatch exc
-        if (!this.feedController.isFeedExists(name)) {
-            RssFeed newFeed = new RssFeed(name, URL, updateTime, null, null, null);
-            this.feedController.addFeed(newFeed);
+        if (!this.feedManager.isFeedExists(name)) {
+            RssFeedConfiguration newFeed = new RssFeedConfiguration(name, URL, updateTime, null, null, null);
+            this.feedManager.addFeed(newFeed);
         } else {
             throw new FeedAlreadyExistsException(String.format("Feed %s does not exist", name));
         }
     }
 
     private void displayFeedList() {
-        this.feedController.getFeedsList().forEach((key, value) ->
-                System.out.println(String.format("Name: %s. Status: %b", key, value.getStatus())));
+        this.feedManager.getFeedsList().forEach((key, value) ->
+                System.out.println(String.format("Name: %s. Status: %b", key, value.getFeedConfiguration().getStatus())));
     }
 
     private void editFeed() {
@@ -101,8 +98,8 @@ public class UserMenu {
         String property = scanner.nextLine();
         System.out.println("New value: ");
         String value = scanner.nextLine();
-        if (this.feedController.isFeedExists(name)) {
-            this.feedController.editProperties(name, property, value);
+        if (this.feedManager.isFeedExists(name)) {
+            this.feedManager.editProperties(name, property, value);
         } else {
             throw new NoSuchFeedException(String.format("Feed %s does not exist", name));
         }
@@ -111,8 +108,8 @@ public class UserMenu {
     private void viewFeed() {
         System.out.println("Name to view: ");
         String name = scanner.nextLine();
-        if (this.feedController.isFeedExists(name)) {
-            System.out.println(this.feedController.viewFeed(name));
+        if (this.feedManager.isFeedExists(name)) {
+            System.out.println(this.feedManager.viewFeed(name));
         } else {
             throw new NoSuchFeedException(String.format("Feed %s does not exist", name));
         }
@@ -123,8 +120,8 @@ public class UserMenu {
         System.out.println("Name to stop: ");
         String name = scanner.nextLine();
 
-        if (this.feedController.isFeedExists(name)) {
-            this.feedController.stopFeed(name);
+        if (this.feedManager.isFeedExists(name)) {
+            this.feedManager.stopFeed(name);
         } else {
             throw new NoSuchFeedException(String.format("Feed %s does not exist", name));
         }
@@ -132,10 +129,11 @@ public class UserMenu {
 
     private void printMenu() {
         log.info("Chose option: ");
-        log.info("1. Add feed worker      || add");
-        log.info("2. Display workers list || list");
-        log.info("3. Edit feed worker     || edit");
-        log.info("4. Stop feed worker     || stop");
-        log.info("5. Exit                 || exit");
+        log.info("1. Add feed worker          || add");
+        log.info("2. Display workers list     || list");
+        log.info("3. Display worker' settings || view");
+        log.info("4. Edit feed worker         || edit");
+        log.info("5. Stop feed worker         || stop");
+        log.info("6. Exit                     || exit");
     }
 }

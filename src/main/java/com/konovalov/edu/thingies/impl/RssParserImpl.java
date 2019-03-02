@@ -1,6 +1,6 @@
 package com.konovalov.edu.thingies.impl;
 
-import com.konovalov.edu.model.RssFeed;
+import com.konovalov.edu.model.RssFeedConfiguration;
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.FeedException;
@@ -30,19 +30,18 @@ public class RssParserImpl implements RssParser {
     }
 
     @Override
-    public void fetchRssFeed(RssFeed rssFeed) {
+    public void fetchRssFeed(RssFeedConfiguration rssFeedConfiguration) {
         try (CloseableHttpClient client = HttpClients.createMinimal()) {
-            HttpUriRequest request = new HttpGet(rssFeed.getURL());
+            HttpUriRequest request = new HttpGet(rssFeedConfiguration.getURL());
             try (CloseableHttpResponse response = client.execute(request);
                  InputStream stream = response.getEntity().getContent()) {
                 SyndFeedInput input = new SyndFeedInput();
                 SyndFeed feed = input.build(new XmlReader(stream));
                 List<SyndEntry> entries = feed.getEntries().stream()
-                        .filter(e -> ((!isNull(e.getPublishedDate())) || (e.getPublishedDate().compareTo(rssFeed.getLastUpdateDate())) > 0))
+                        .filter(e -> ((!isNull(e.getPublishedDate())) || (e.getPublishedDate().compareTo(rssFeedConfiguration.getLastUpdateDate())) > 0))
                         .collect(Collectors.toList());
 
-                entries.forEach(e -> System.out.println(e.getPublishedDate()));
-
+                entries.forEach(e -> System.out.println(e.getDescription().toString()));
             } catch (FeedException e) {
                 e.printStackTrace();
             }
