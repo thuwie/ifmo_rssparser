@@ -75,7 +75,7 @@ public class RssParserImpl implements RssParser {
                     Method transformMethod = entry.getClass().getMethod(command);
                     Object value = transformMethod.invoke(entry);
                     if ("description".equalsIgnoreCase(key)) {
-                        value = (((SyndContent) value).getValue());
+                        value = (((SyndContent) value).getValue()).trim();
                     }
                     valuesToReplace.put(key, value);
                 } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException exception) {
@@ -93,8 +93,8 @@ public class RssParserImpl implements RssParser {
         List<String> formalizedItems = new ArrayList<>();
         parsedItems.forEach(item -> {
             StrSubstitutor sub = new StrSubstitutor(item);
-            String tag = this.rssFeedConfiguration.getTag((String) item.get("publishedDate");
-                    String result = sub.replace(this.rssFeedConfiguration.getTemplate()); //
+            String tag = this.rssFeedConfiguration.getTag(item.get("publishedDate").toString());
+            String result = tag + sub.replace(this.rssFeedConfiguration.getTemplate()); //
             formalizedItems.add(result);
         });
         writeFile(formalizedItems);

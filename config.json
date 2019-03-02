@@ -6,7 +6,7 @@
       "updateTime": 10,
       "postsLimit": 2,
       "lastUpdateDate": "Sat Mar 02 15:00:00 MSK 2019",
-      "template": "${title}, ${description}"
+      "template": "${title}\n${description}\n"
     }
   ]
 }

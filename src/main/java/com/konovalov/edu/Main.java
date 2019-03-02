@@ -2,7 +2,6 @@ package com.konovalov.edu;
 
 import com.konovalov.edu.controller.RssFeedController;
 import com.konovalov.edu.system.FeedManager;
-import com.konovalov.edu.model.RssFeedConfiguration;
 import com.konovalov.edu.system.Init;
 import org.apache.log4j.PropertyConfigurator;
 import com.konovalov.edu.system.UserMenu;
@@ -22,13 +21,5 @@ public class Main {
 
         UserMenu cli = new UserMenu(feedManager);
         cli.launchUserMenu();
-
-
-//        org.apache.log4j.BasicConfigurator.configure();
-//        String urlNew = "https://www.jpl.nasa.gov/multimedia/rss/news.xml";
-//        com.konovalov.edu.model.RssFeedConfiguration parser = new com.konovalov.edu.model.RssFeedConfiguration(urlNew, 1);
-//
-//        parser.dumb();
-
     }
 }

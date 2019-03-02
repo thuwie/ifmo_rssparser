@@ -30,7 +30,7 @@ public class RssFeedConfiguration {
     }
 
     public String getTag(String itemDate) {
-        return String.format("Feed [%s], [%s]", this.name, itemDate);
+        return String.format("Feed [%s], [%s] \n", this.name, itemDate);
     }
 
     @Override

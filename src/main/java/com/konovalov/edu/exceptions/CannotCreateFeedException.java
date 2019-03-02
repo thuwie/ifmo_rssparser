@@ -1,5 +1,6 @@
 package com.konovalov.edu.exceptions;
 
+
 public class CannotCreateFeedException  extends RuntimeException {
     public CannotCreateFeedException() {
     }
