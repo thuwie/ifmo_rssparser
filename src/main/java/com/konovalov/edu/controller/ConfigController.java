@@ -8,6 +8,8 @@ import lombok.Data;
 
 import java.io.*;
 
+import static java.util.Objects.isNull;
+
 /**
  * The type Config controller.
  */
@@ -32,9 +34,12 @@ public class ConfigController {
      */
     public static JsonArray loadFeeds() {
         JsonArray feedConfig = new JsonArray();
+        JsonObject feeds = new JsonObject();
         try {
             String configContent = readFile(System.getProperty("user.dir") + configPath);
-            JsonObject feeds = new JsonParser().parse(configContent).getAsJsonObject();
+            if (!configContent.isEmpty()) {
+                feeds = new JsonParser().parse(configContent).getAsJsonObject();
+            }
             feedConfig = feeds.getAsJsonArray("feeds");
         } catch (IOException e) {
             log.error(e.getMessage());

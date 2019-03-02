@@ -21,21 +21,21 @@ public interface RssParser {
     /**
      * Fetch rss feed.
      */
-    public void fetchRssFeed();
+    public SyndFeed fetchRssFeed();
 
     /**
      * Transform rss feed.
      *
      * @param feed the feed
      */
-    public void transformRssFeed(SyndFeed feed);
+    public List<Map<String, Object>> transformRssFeed(SyndFeed feed);
 
     /**
      * Formalize data.
      *
      * @param parsedItems the parsed items
      */
-    public void formalizeData(List<Map<String, Object>> parsedItems);
+    public List<String> formalizeData(List<Map<String, Object>> parsedItems);
 
     /**
      * Write file.

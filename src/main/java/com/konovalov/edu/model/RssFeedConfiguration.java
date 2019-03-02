@@ -27,26 +27,6 @@ public class RssFeedConfiguration {
     }
 
     /**
-     * Instantiates a new Rss feed configuration.
-     *
-     * @param name           the rss name
-     * @param URL            the rss url
-     * @param updateTime     the gap between updates in millis
-     * @param lastUpdateDate the last update date
-     * @param template       the template
-     * @param file           the file
-     */
-    public RssFeedConfiguration(String name, String URL, int updateTime, Date lastUpdateDate, String template, File file) {
-        this.name = name;
-        this.URL = URL;
-        this.updateTime = updateTime;
-        this.status = false;
-        this.lastUpdateDate = lastUpdateDate;
-        this.template = template;
-        this.file = file;
-    }
-
-    /**
      * Gets tag.
      *
      * @param itemDate the item date
@@ -58,12 +38,12 @@ public class RssFeedConfiguration {
 
     @Override
     public String toString() {
-        return String.format("Name: [%s]\n " +
-                "Url: [%s]\n" +
-                "Update time: [%d]\n" +
-                "Status: [%b]\n" +
-                "Template: [%s]\n" +
-                "Filename: [%s]", this.name, this.URL, this.updateTime, this.status, this.template, this.file);
+        return String.format("Name:         [%s]\n" +
+                             "Url:          [%s]\n" +
+                             "Update time:  [%d]\n" +
+                             "Status:       [%b]\n" +
+                             "Template:     [%s]\n" +
+                             "Filename:     [%s]", this.name, this.URL, this.updateTime, this.status, this.template, this.file);
     }
 
 }

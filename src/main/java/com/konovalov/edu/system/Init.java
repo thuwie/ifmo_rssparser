@@ -35,6 +35,8 @@ public class Init {
 
         JsonArray feedsConfig = ConfigController.loadFeeds();
 
+        if (isNull(feedsConfig)) return feedList;
+
         feedsConfig.forEach(e -> {
             JsonObject feedConfig = e.getAsJsonObject();
             RssFeedConfiguration newFeedConfiguration = new RssFeedConfiguration();

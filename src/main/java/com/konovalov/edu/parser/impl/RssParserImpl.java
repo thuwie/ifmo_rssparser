@@ -24,7 +24,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -53,13 +52,14 @@ public class RssParserImpl implements RssParser {
     }
 
     @Override
-    public void fetchRssFeed() {
+    public SyndFeed fetchRssFeed() {
+        SyndFeed feed = null;
         try (CloseableHttpClient client = HttpClients.createMinimal()) {
             HttpUriRequest request = new HttpGet(this.rssFeedConfiguration.getURL());
             try (CloseableHttpResponse response = client.execute(request);
                  InputStream stream = response.getEntity().getContent()) {
                 SyndFeedInput input = new SyndFeedInput();
-                SyndFeed feed = input.build(new XmlReader(stream));
+                feed = input.build(new XmlReader(stream));
                 transformRssFeed(feed);
             } catch (FeedException e) {
                 log.error("Failed to parse feed {} - {}", this.rssFeedConfiguration.getName(), e.getMessage());
@@ -68,10 +68,11 @@ public class RssParserImpl implements RssParser {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return feed;
     }
 
     @Override
-    public void transformRssFeed(SyndFeed feed) {
+    public List<Map<String, Object>> transformRssFeed(SyndFeed feed) {
         HashMap<String, String> syndParseMethods = Defaults.syndTemplate();
 
         List<Map<String, Object>> parsedItems = new ArrayList<>();
@@ -96,11 +97,11 @@ public class RssParserImpl implements RssParser {
             });
             parsedItems.add(valuesToReplace);
         });
-        formalizeData(parsedItems);
+        return parsedItems;
     }
 
     @Override
-    public void formalizeData(List<Map<String, Object>> parsedItems) {
+    public List<String> formalizeData(List<Map<String, Object>> parsedItems) {
         List<String> formalizedItems = new ArrayList<>();
         parsedItems.forEach(item -> {
             StrSubstitutor sub = new StrSubstitutor(item);
@@ -108,7 +109,7 @@ public class RssParserImpl implements RssParser {
             String result = tag + sub.replace(this.rssFeedConfiguration.getTemplate()); //
             formalizedItems.add(result);
         });
-        writeFile(formalizedItems);
+        return formalizedItems;
     }
 
     @Override

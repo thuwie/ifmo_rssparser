@@ -3,8 +3,11 @@ package com.konovalov.edu.system;
 import com.konovalov.edu.exceptions.FeedAlreadyExistsException;
 import com.konovalov.edu.model.RssFeedConfiguration;
 import com.konovalov.edu.exceptions.NoSuchFeedException;
+import com.konovalov.edu.util.Defaults;
+import com.konovalov.edu.util.FeedUtils;
 import lombok.extern.slf4j.Slf4j;
 
+import java.sql.SQLOutput;
 import java.util.Scanner;
 
 /**
@@ -54,7 +57,11 @@ public class UserMenu {
                 break;
             }
             case ("view"): {
-                viewFeed();
+                try {
+                    viewFeed();
+                } catch (NoSuchFeedException ex) {
+                    log.error(ex.getMessage());
+                };
                 break;
             }
             case ("edit"): {
@@ -88,9 +95,23 @@ public class UserMenu {
         System.out.println("url: ");
         String URL = scanner.nextLine().trim();
         System.out.println("update time: ");
-        int updateTime = scanner.nextInt(); // TODO catch mismatch exc
+        int updateTime = scanner.nextInt();
+        System.out.println("Posts limit: (optional)");
+        int postsLimit = scanner.nextInt();// TODO catch mismatch exc
+        System.out.println("Template: (optional)");
+        String template = scanner.nextLine();
+        System.out.println("Filename: (optional)");
+        String filename = scanner.nextLine();
+
         if (!this.feedManager.isFeedExists(name)) {
-            RssFeedConfiguration newFeed = new RssFeedConfiguration(name, URL, updateTime, null, null, null);
+            RssFeedConfiguration newFeed = new RssFeedConfiguration();
+            newFeed.setName(name);
+            newFeed.setURL(URL);
+            newFeed.setUpdateTime(updateTime);
+            newFeed.setTemplate(template.isEmpty() ? Defaults.template : template);
+            newFeed.setPostsLimit(postsLimit != 0 ? postsLimit : Defaults.postsLimit);
+            newFeed.setFile(filename.isEmpty() ? FeedUtils.getFile(FeedUtils.convertUrlToFilename(URL)) : FeedUtils.getFile(filename));
+
             this.feedManager.addFeed(newFeed);
         } else {
             throw new FeedAlreadyExistsException(String.format("Feed %s does not exist", name));

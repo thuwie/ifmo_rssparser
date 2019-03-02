@@ -53,7 +53,7 @@ public class FeedManager {
      */
     public void addFeed(RssFeedConfiguration feedConfiguration) {
         RssFeedController feed = new RssFeedController(feedConfiguration);
-        ScheduledFuture<?> feedFuture = executor.scheduleAtFixedRate(feed, 0L, feed.getFeedConfiguration().getUpdateTime(), TimeUnit.SECONDS);
+        ScheduledFuture<?> feedFuture = executor.scheduleAtFixedRate(feed, feed.getFeedConfiguration().getUpdateTime(), feed.getFeedConfiguration().getUpdateTime(), TimeUnit.MILLISECONDS);
         feedsList.put(feed.getFeedConfiguration().getName(), feed);
         tasksList.put(feed.getFeedConfiguration().getName(), feedFuture);
         feed.getFeedConfiguration().setStatus(true);
@@ -79,7 +79,7 @@ public class FeedManager {
      * @return the string
      */
     public String viewFeed(String name) {
-        return feedsList.get(name).toString();
+        return feedsList.get(name).getFeedConfiguration().toString();
     }
 
     private void scheduleFeeds() {
