@@ -96,7 +96,7 @@ public class UserMenu {
         String URL = scanner.nextLine().trim();
         System.out.println("update time: ");
         int updateTime = scanner.nextInt();
-        System.out.println("Posts limit: (optional)");
+        System.out.println("Posts limit: ");
         int postsLimit = scanner.nextInt();// TODO catch mismatch exc
         System.out.println("Template: (optional)");
         String template = scanner.nextLine();

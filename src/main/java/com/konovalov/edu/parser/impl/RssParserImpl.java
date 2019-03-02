@@ -54,7 +54,7 @@ public class RssParserImpl implements RssParser {
     @Override
     public SyndFeed fetchRssFeed() {
         SyndFeed feed = null;
-        try (CloseableHttpClient client = HttpClients.createMinimal()) {
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
             HttpUriRequest request = new HttpGet(this.rssFeedConfiguration.getURL());
             try (CloseableHttpResponse response = client.execute(request);
                  InputStream stream = response.getEntity().getContent()) {
