@@ -9,10 +9,16 @@ import com.konovalov.edu.util.Defaults;
 import com.konovalov.edu.util.FeedUtils;
 
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
+
+import static java.util.Objects.isNull;
 
 public class Init {
     public Init() {
@@ -44,10 +50,20 @@ public class Init {
                 newFeedConfiguration.setUpdateTime(600L);
             }
 
-            if (feedConfig.has("lastUpdateTime")) {
-                newFeedConfiguration.setLastUpdateDate(new Date(feedConfig.get("lastUpdateTime").getAsString())); // date constructor is deprecated, so i had to cheer him up and make him believe in himself
+            if (feedConfig.has("lastUpdateDate")) {
+                Date lastUpdateTime = FeedUtils.extractDate(feedConfig.get("lastUpdateDate").getAsString());
+                if (!isNull(lastUpdateTime)) {
+                    newFeedConfiguration.setLastUpdateDate(lastUpdateTime);
+                } else
+                    newFeedConfiguration.setLastUpdateDate(Defaults.lastUpdateDate);
             } else {
                 newFeedConfiguration.setLastUpdateDate(Defaults.lastUpdateDate);
+            }
+
+            if (feedConfig.has("postsLimit")) {
+                newFeedConfiguration.setPostsLimit(feedConfig.get("postsLimit").getAsInt());
+            } else {
+                newFeedConfiguration.setPostsLimit(Defaults.postsLimit);
             }
 
             if (feedConfig.has("template")) {

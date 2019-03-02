@@ -11,6 +11,7 @@ public class RssFeedConfiguration {
     private Long updateTime;
     private Date lastUpdateDate;
     private String template;
+    private Integer postsLimit;
     private Boolean status;
     private String filename;
 

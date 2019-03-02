@@ -12,6 +12,8 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 public class Main {
     public static void main(String[] args) {
+        //https://lenta.ru/rss
+        //http://blog.case.edu/news/feed.atom
         PropertyConfigurator.configure(Main.class.getResourceAsStream("/log4j.properties"));
 
         ScheduledThreadPoolExecutor scheduledExecutorService = Init.initializeExecutor();

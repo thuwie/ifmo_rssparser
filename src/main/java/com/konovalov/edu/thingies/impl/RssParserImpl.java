@@ -15,6 +15,9 @@ import com.konovalov.edu.thingies.RssParser;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,10 +41,9 @@ public class RssParserImpl implements RssParser {
                 SyndFeedInput input = new SyndFeedInput();
                 SyndFeed feed = input.build(new XmlReader(stream));
                 List<SyndEntry> entries = feed.getEntries().stream()
-                        .filter(e -> ((!isNull(e.getPublishedDate())) || (e.getPublishedDate().compareTo(rssFeedConfiguration.getLastUpdateDate())) > 0))
+                        .filter(e -> (!isNull(e.getPublishedDate()) && e.getPublishedDate().after(rssFeedConfiguration.getLastUpdateDate())))
                         .collect(Collectors.toList());
-
-                entries.forEach(e -> System.out.println(e.getDescription().toString()));
+                entries.forEach(e -> System.out.println(e.getTitle()));
             } catch (FeedException e) {
                 e.printStackTrace();
             }
