@@ -57,7 +57,8 @@ public class RssParserImpl implements RssParser {
         try (CloseableHttpClient client = HttpClients.createDefault()) {
             HttpUriRequest request = new HttpGet(this.rssFeedConfiguration.getURL());
             try (CloseableHttpResponse response = client.execute(request);
-                 InputStream stream = response.getEntity().getContent()) {
+                 InputStream stream = response.getEntity().getContent()
+                ) {
                 SyndFeedInput input = new SyndFeedInput();
                 feed = input.build(new XmlReader(stream));
                 transformRssFeed(feed);

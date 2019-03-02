@@ -1,5 +1,12 @@
 # ifmo_rssparser
-## exam
-https://vk.com/doc15707234_492678412?hash=ccb295766950a9a119&dl=af6306934d383471b7  
-
-hehmeh
+jdk 1.8  && maven 3.0    
+assembly jar  :  
+     
+     
+     
+     mvn clean test compile assembly:single    
+  
+run jar  :  
+    
+    
+    java -jar ifmo_rssparser-jar-with-dependencies.jar

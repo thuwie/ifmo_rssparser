@@ -8,6 +8,7 @@ import com.konovalov.edu.util.FeedUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.SQLOutput;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 /**
@@ -90,17 +91,25 @@ public class UserMenu {
     }
 
     private void addFeed() {
-        System.out.println("Name: ");
+        System.out.println("name: ");
         String name = scanner.nextLine();
         System.out.println("url: ");
         String URL = scanner.nextLine().trim();
-        System.out.println("update time: ");
-        int updateTime = scanner.nextInt();
-        System.out.println("Posts limit: ");
-        int postsLimit = scanner.nextInt();// TODO catch mismatch exc
-        System.out.println("Template: (optional)");
+        int updateTime;
+        int postsLimit;
+        try {
+            System.out.println("updateTime: ");
+            updateTime = scanner.nextInt();
+            System.out.println("postsLimit: ");
+            postsLimit = scanner.nextInt();
+        } catch (InputMismatchException ex) {
+            log.error("Invalid integer");
+            return;
+        }
+        System.out.println("Template: opt");
         String template = scanner.nextLine();
-        System.out.println("Filename: (optional)");
+
+        System.out.println("Filename: opt");
         String filename = scanner.nextLine();
 
         if (!this.feedManager.isFeedExists(name)) {
@@ -108,6 +117,7 @@ public class UserMenu {
             newFeed.setName(name);
             newFeed.setURL(URL);
             newFeed.setUpdateTime(updateTime);
+            newFeed.setLastUpdateDate(Defaults.lastUpdateDate);
             newFeed.setTemplate(template.isEmpty() ? Defaults.template : template);
             newFeed.setPostsLimit(postsLimit != 0 ? postsLimit : Defaults.postsLimit);
             newFeed.setFile(filename.isEmpty() ? FeedUtils.getFile(FeedUtils.convertUrlToFilename(URL)) : FeedUtils.getFile(filename));
@@ -120,7 +130,7 @@ public class UserMenu {
 
     private void displayFeedList() {
         this.feedManager.getFeedsList().forEach((key, value) ->
-                System.out.println(String.format("Name: %s. Status: %b", key, value.getFeedConfiguration().getStatus())));
+                System.out.println(String.format("Name: %s. Running: %b", key, value.getFeedConfiguration().getStatus())));
     }
 
     private void editFeed() {
@@ -160,12 +170,12 @@ public class UserMenu {
     }
 
     private void printMenu() {
-        log.info("Chose option: ");
-        log.info("1. Add feed worker           || add");
-        log.info("2. Display workers list      || list");
-        log.info("3. Display worker's settings || view");
-        log.info("4. Edit feed worker          || edit");
-        log.info("5. Stop feed worker          || stop");
-        log.info("6. Exit                      || exit");
+        System.out.println("Take option: ");
+        System.out.println("1. Add feed worker           || add");
+        System.out.println("2. Display workers list      || list");
+        System.out.println("3. Display worker's settings || view");
+        System.out.println("4. Edit feed worker          || edit");
+        System.out.println("5. Stop feed worker          || stop");
+        System.out.println("6. Exit                      || exit");
     }
 }

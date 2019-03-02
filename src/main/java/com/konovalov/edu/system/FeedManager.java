@@ -2,6 +2,7 @@ package com.konovalov.edu.system;
 
 import com.konovalov.edu.controller.RssFeedController;
 import com.konovalov.edu.model.RssFeedConfiguration;
+import com.konovalov.edu.util.FeedUtils;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -99,9 +100,53 @@ public class FeedManager {
      * @param value    the value
      */
     public void editProperties(String name, String property, String value) {
-        if ("name".equalsIgnoreCase(property)) {
-            this.feedsList.put(value, this.feedsList.remove(name));
-            this.tasksList.put(value, this.tasksList.remove(name));
+        RssFeedConfiguration tempConfiguration;
+        switch (property) {
+            case ("name"): {
+                this.feedsList.put(value, this.feedsList.remove(name));
+                this.tasksList.put(value, this.tasksList.remove(name));
+                break;
+            }
+            case ("url"): {
+                stopEditedFeed(name);
+                tempConfiguration = this.feedsList.remove(name).getFeedConfiguration();
+                this.tasksList.remove(name);
+                tempConfiguration.setURL(value);
+                addEditedFeed(tempConfiguration);
+                break;
+            }
+            case ("updateTime"): {
+                stopEditedFeed(name);
+                tempConfiguration = this.feedsList.remove(name).getFeedConfiguration();
+                this.tasksList.remove(name);
+                tempConfiguration.setUpdateTime(Integer.parseInt(value));
+                addEditedFeed(tempConfiguration);
+                break;
+            }
+            case ("postsLimit"): {
+                stopEditedFeed(name);
+                tempConfiguration = this.feedsList.remove(name).getFeedConfiguration();
+                this.tasksList.remove(name);
+                tempConfiguration.setPostsLimit(Integer.parseInt(value));
+                addEditedFeed(tempConfiguration);
+                break;
+            }
+            case ("template"): {
+                stopEditedFeed(name);
+                tempConfiguration = this.feedsList.remove(name).getFeedConfiguration();
+                this.tasksList.remove(name);
+                tempConfiguration.setTemplate(value);
+                addEditedFeed(tempConfiguration);
+                break;
+            }
+            case ("filename"): {
+                stopEditedFeed(name);
+                tempConfiguration = this.feedsList.remove(name).getFeedConfiguration();
+                this.tasksList.remove(name);
+                tempConfiguration.setFile(FeedUtils.getFile(value));
+                addEditedFeed(tempConfiguration);
+                break;
+            }
         }
     }
 
@@ -120,5 +165,19 @@ public class FeedManager {
      */
     public boolean isFeedExists(String name) {
         return !isNull(this.feedsList.get(name));
+    }
+
+    private void stopEditedFeed(String name) {
+        tasksList.get(name).cancel(false);
+        tasksList.remove(name);
+        feedsList.get(name).getFeedConfiguration().setStatus(false);
+    }
+
+    private void addEditedFeed(RssFeedConfiguration feedConfiguration) {
+        RssFeedController feed = new RssFeedController(feedConfiguration);
+        ScheduledFuture<?> feedFuture = executor.scheduleAtFixedRate(feed, feed.getFeedConfiguration().getUpdateTime(), feed.getFeedConfiguration().getUpdateTime(), TimeUnit.MILLISECONDS);
+        feedsList.put(feed.getFeedConfiguration().getName(), feed);
+        tasksList.put(feed.getFeedConfiguration().getName(), feedFuture);
+        feed.getFeedConfiguration().setStatus(true);
     }
 }

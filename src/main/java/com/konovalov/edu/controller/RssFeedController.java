@@ -13,6 +13,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
@@ -42,10 +43,10 @@ public class RssFeedController implements Runnable {
 
     @Override
     public void run() {
-        System.out.println("going");
         SyndFeed parsedFeed = parser.fetchRssFeed();
         List<Map<String, Object>> transformedFeed = parser.transformRssFeed(parsedFeed);
         List<String> preparedData = parser.formalizeData(transformedFeed);
         parser.writeFile(preparedData);
+        this.feedConfiguration.setLastUpdateDate(Calendar.getInstance().getTime());
     }
 }

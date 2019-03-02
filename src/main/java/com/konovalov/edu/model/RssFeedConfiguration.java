@@ -41,9 +41,10 @@ public class RssFeedConfiguration {
         return String.format("Name:         [%s]\n" +
                              "Url:          [%s]\n" +
                              "Update time:  [%d]\n" +
+                             "Last Update:  [%s]\n" +
                              "Status:       [%b]\n" +
                              "Template:     [%s]\n" +
-                             "Filename:     [%s]", this.name, this.URL, this.updateTime, this.status, this.template, this.file);
+                             "Filename:     [%s]", this.name, this.URL, this.updateTime, this.lastUpdateDate.toString(),this.status, this.template, this.file);
     }
 
 }
