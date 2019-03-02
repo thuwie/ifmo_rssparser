@@ -29,6 +29,10 @@ public class RssFeedConfiguration {
         this.filename = filename;
     }
 
+    public String getTag(String itemDate) {
+        return String.format("Feed [%s], [%s]", this.name, itemDate);
+    }
+
     @Override
     public String toString() {
         return String.format("Name: [%s]\n " +

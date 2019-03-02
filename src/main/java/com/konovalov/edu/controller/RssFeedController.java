@@ -12,12 +12,12 @@ public class RssFeedController implements Runnable {
 
     public RssFeedController(RssFeedConfiguration feedConfiguration) {
         this.feedConfiguration = feedConfiguration;
-        this.parser = new RssParserImpl();
+        this.parser = new RssParserImpl(feedConfiguration);
     }
 
     @Override
     public void run() {
         System.out.println("phaha");
-        parser.fetchRssFeed(feedConfiguration);
+        parser.fetchRssFeed();
     }
 }

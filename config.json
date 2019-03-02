@@ -4,9 +4,9 @@
       "name": "lenta",
       "url": "https://lenta.ru/rss",
       "updateTime": 10,
-      "postsLimit": 5,
-      "lastUpdateDate": "Sat Mar 02 03:00:00 MSK 2019",
-      "template": "${name}, ${description},"
+      "postsLimit": 2,
+      "lastUpdateDate": "Sat Mar 02 15:00:00 MSK 2019",
+      "template": "${title}, ${description}"
     }
   ]
 }

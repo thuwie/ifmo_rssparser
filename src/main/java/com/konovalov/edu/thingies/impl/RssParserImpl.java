@@ -1,11 +1,16 @@
 package com.konovalov.edu.thingies.impl;
 
+import com.konovalov.edu.exceptions.RssParserException;
 import com.konovalov.edu.model.RssFeedConfiguration;
+import com.konovalov.edu.util.Defaults;
+import com.rometools.rome.feed.synd.SyndContent;
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.FeedException;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.text.StrSubstitutor;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -15,16 +20,19 @@ import com.konovalov.edu.thingies.RssParser;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 
+@Slf4j
 public class RssParserImpl implements RssParser {
-    public RssParserImpl() {
+    private RssFeedConfiguration rssFeedConfiguration;
+
+    public RssParserImpl(RssFeedConfiguration rssFeedConfiguration) {
+        this.rssFeedConfiguration = rssFeedConfiguration;
     }
 
     @Override
@@ -33,19 +41,17 @@ public class RssParserImpl implements RssParser {
     }
 
     @Override
-    public void fetchRssFeed(RssFeedConfiguration rssFeedConfiguration) {
+    public void fetchRssFeed() {
         try (CloseableHttpClient client = HttpClients.createMinimal()) {
-            HttpUriRequest request = new HttpGet(rssFeedConfiguration.getURL());
+            HttpUriRequest request = new HttpGet(this.rssFeedConfiguration.getURL());
             try (CloseableHttpResponse response = client.execute(request);
                  InputStream stream = response.getEntity().getContent()) {
                 SyndFeedInput input = new SyndFeedInput();
                 SyndFeed feed = input.build(new XmlReader(stream));
-                List<SyndEntry> entries = feed.getEntries().stream()
-                        .filter(e -> (!isNull(e.getPublishedDate()) && e.getPublishedDate().after(rssFeedConfiguration.getLastUpdateDate())))
-                        .collect(Collectors.toList());
-                entries.forEach(e -> System.out.println(e.getTitle()));
+                transformRssFeed(feed);
             } catch (FeedException e) {
-                e.printStackTrace();
+                log.error("Failed to parse feed {} - {}", this.rssFeedConfiguration.getName(), e.getMessage());
+                throw new RssParserException("Cannot parse feed", e);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -53,12 +59,50 @@ public class RssParserImpl implements RssParser {
     }
 
     @Override
-    public void transformRssFeed() {
+    public void transformRssFeed(SyndFeed feed) {
+        HashMap<String, String> syndParseMethods = Defaults.syndTemplate();
 
+        List<Map<String, Object>> parsedItems = new ArrayList<>();
+        List<SyndEntry> entries = feed.getEntries().stream()
+                .filter(entry -> (!isNull(entry.getPublishedDate()) && entry.getPublishedDate().after(this.rssFeedConfiguration.getLastUpdateDate())))
+                .limit(this.rssFeedConfiguration.getPostsLimit())
+                .collect(Collectors.toList());
+
+        entries.forEach(entry -> {
+            Map<String, Object> valuesToReplace = new HashMap<>();
+            syndParseMethods.forEach((key, command) -> {
+                try {
+                    Method transformMethod = entry.getClass().getMethod(command);
+                    Object value = transformMethod.invoke(entry);
+                    if ("description".equalsIgnoreCase(key)) {
+                        value = (((SyndContent) value).getValue());
+                    }
+                    valuesToReplace.put(key, value);
+                } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException exception) {
+                    log.error("Corrupted method inv", exception);
+                }
+            });
+            parsedItems.add(valuesToReplace);
+        });
+//        parsedItems.forEach(e-> System.out.println(e));
+        formalizeData(parsedItems);
     }
 
     @Override
-    public void shapeRssFeed() {
+    public void formalizeData(List<Map<String, Object>> parsedItems) {
+        List<String> formalizedItems = new ArrayList<>();
+        parsedItems.forEach(item -> {
+            StrSubstitutor sub = new StrSubstitutor(item);
+            String tag = this.rssFeedConfiguration.getTag((String) item.get("publishedDate");
+                    String result = sub.replace(this.rssFeedConfiguration.getTemplate()); //
+            formalizedItems.add(result);
+        });
+        writeFile(formalizedItems);
+    }
 
+    @Override
+    public synchronized void writeFile(List<String> values) {
+        values.forEach(e -> System.out.println(e));
+//        Files.write(this.rssFeedConfiguration.getFilename(), )
     }
 }
